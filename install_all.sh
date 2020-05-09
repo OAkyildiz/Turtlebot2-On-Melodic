@@ -1,39 +1,53 @@
 #!/usr/bin/env sh
 
+rosdep update
+sudo apt update
+
+#2nd Level dependencies (will move)
+sudo apt install python3-{numpy,scipy,matplotlib,sympy} -y
+
+sudo apt install ros-melodic-laptop-battery-monitor  -y
+
+# Bayesian Filtering Library
+sudo apt install ros-melodic-bfl -y
+
+# Sensor dependencies
+sudo apt install libeigen3-dev ros-melodic-depthimage-to-laserscan ros-melodic-robot-pose-ekf -y
+
+#Embedded control libraries
+sudo apt-get install ros-melodic-ecl-streams -y
+
+# Yujin Robot
+sudo apt install ros-melodic-yujin-ocs  -y
+
+#Kobuki Base
+# https://github.com/turtlebot/turtlebot/issues/272 
+sudo apt install ros-melodic-kobuki-core ros-melodic-kobuki-dock-drive \
+ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi ros-melodic-kobuki-msgs -y
+#git clone https://github.com/yujinrobot/kobuki_desktop.git
+
+
 mkdir -p src
 cd src
 
-git clone https://github.com/turtlebot/turtlebot_simulator
+catkin config --cmake-args -DOpenCV_DIR=/usr/share/opencv4/
+#cv_bridge with OpenCV 4
+git clone https://github.com/OAkyildiz/vision_opencv.git
+
+#Turtlebot
+#git clone https://github.com/turtlebot/turtlebot_simulator
 git clone https://github.com/turtlebot/turtlebot.git
-git clone https://github.com/turtlebot/turtlebot_apps.git
+git clone https://github.com/turtlebot/turtlebot_apps.git #turtlebot_actions needs a little change
 git clone https://github.com/turtlebot/turtlebot_msgs.git
 git clone https://github.com/turtlebot/turtlebot_interactions.git
 
-git clone https://github.com/toeklk/orocos-bayesian-filtering.git
-cd orocos-bayesian-filtering/orocos_bfl/
-./configure
-make
-sudo make install
-cd ../
-make
-cd ../
-
-git clone https://github.com/udacity/robot_pose_ekf
-git clone https://github.com/ros-perception/depthimage_to_laserscan.git
-
-git clone https://github.com/yujinrobot/kobuki_msgs.git
-git clone https://github.com/yujinrobot/kobuki_desktop.git
-cd kobuki_desktop/
-rm -r kobuki_qtestsuite
-cd -
+#Kobuki for Melodic
 git clone --single-branch --branch melodic https://github.com/yujinrobot/kobuki.git
-mv kobuki/kobuki_description kobuki/kobuki_bumper2pc \
-  kobuki/kobuki_node kobuki/kobuki_keyop \
-  kobuki/kobuki_safety_controller ./
 
-git clone https://github.com/yujinrobot/yujin_ocs.git
-mv yujin_ocs/yocs_cmd_vel_mux yujin_ocs/yocs_controllers .
-rm -rf yujin_ocs
+# Build
+catkin build --start-with cv_bridge
 
-sudo apt-get install ros-melodic-kobuki-* -y
-sudo apt-get install ros-melodic-ecl-streams -y
+
+# I have puck
+# sudo apt install ros-melodic-velodyne -y
+
