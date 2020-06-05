@@ -12,7 +12,7 @@ sudo apt install ros-melodic-laptop-battery-monitor  -y
 sudo apt install ros-melodic-bfl -y
 
 # Sensor dependencies
-sudo apt install libeigen3-dev ros-melodic-depthimage-to-laserscan ros-melodic-robot-pose-ekf -y
+sudo apt install libeigen3-dev ros-melodic-depthimage-to-laserscan ros-melodic-robot-pose-ekf ros-meldoic-joy -y
 
 #Embedded control libraries
 sudo apt-get install ros-melodic-ecl-streams -y
@@ -34,7 +34,7 @@ catkin config --cmake-args -DOpenCV_DIR=/usr/share/opencv4/
 #cv_bridge with OpenCV 4
 git clone https://github.com/OAkyildiz/vision_opencv.git
 
-#Turtlebot
+# Turtlebot
 #git clone https://github.com/turtlebot/turtlebot_simulator
 git clone https://github.com/turtlebot/turtlebot.git
 git clone https://github.com/turtlebot/turtlebot_apps.git #turtlebot_actions needs a little change
