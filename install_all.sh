@@ -1,34 +1,63 @@
 #!/usr/bin/env sh
 
+mkdir -p src
+cd src
+
+DEFAULT="melodic"
+
+if [[ -z "$1" ]]
+  then
+    DISTRO=$1
+else
+	DISTRO=${DEFAULT}    
+fi
+
 rosdep update
 sudo apt update
 
 #2nd Level dependencies (will move)
 sudo apt install python3-{numpy,scipy,matplotlib,sympy} -y
 
-sudo apt install ros-melodic-laptop-battery-monitor  -y
+sudo apt install ros-${DISTRO}-laptop-battery-monitor  -y
 
 # Bayesian Filtering Library
-sudo apt install ros-melodic-bfl -y
+sudo apt install ros-${DISTRO}-bfl -y
 
 # Sensor dependencies
-sudo apt install libeigen3-dev ros-melodic-depthimage-to-laserscan ros-melodic-robot-pose-ekf ros-meldoic-joy -y
+sudo apt install libeigen3-dev ros-${DISTRO}-depthimage-to-laserscan ros-${DISTRO}-robot-pose-ekf ros-meldoic-joy ros-${DISTRO}--joint-state-publisher-gui -y
 
 #Embedded control libraries
-sudo apt-get install ros-melodic-ecl-streams -y
+sudo apt-get install ros-${DISTRO}-ecl-streams -y
 
 # Yujin Robot
-sudo apt install ros-melodic-yujin-ocs  -y
+if [[ $DISTRO -eq "noetic" ]]
+  then
+	https://github.com/yujinrobot/yujin_ocs
+    
+else
+	sudo apt install ros-${DISTRO}-yujin-ocs ros-${DISTRO}-yocs-cmd-vel-mux -y
+fi
+
 
 #Kobuki Base
 # https://github.com/turtlebot/turtlebot/issues/272 
-sudo apt install ros-melodic-kobuki-core ros-melodic-kobuki-dock-drive \
-ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi ros-melodic-kobuki-msgs -y
+sudo apt install ros-${DISTRO}-kobuki-core ros-${DISTRO}-kobuki-dock-drive \
+ros-${DISTRO}-kobuki-driver ros-${DISTRO}-kobuki-ftdi ros-${DISTRO}-kobuki-msgs -y
 #git clone https://github.com/yujinrobot/kobuki_desktop.git
 
+if [[ $DISTRO -eq "noetic" ]]
+  then
+  	git clone https://github.com/yujinrobot/kobuki_core.git    
+	git clone https://github.com/yujinrobot/kobuki_msgs.git    
+	git clone https://github.com/yujinrobot/kobuki_dock_drive.git    
+	git clone https://github.com/yujinrobot/kobuki_driver.git    
+	git clone https://github.com/yujinrobot/kobuki_ftdi.git    
+    
+else
+	sudo apt install ros-${DISTRO}-kobuki-core ros-${DISTRO}-kobuki-dock-drive \
+	ros-${DISTRO}-kobuki-driver ros-${DISTRO}-kobuki-ftdi ros-${DISTRO}-kobuki-msgs -y
+fi
 
-mkdir -p src
-cd src
 
 catkin config --cmake-args -DOpenCV_DIR=/usr/share/opencv4/
 #cv_bridge with OpenCV 4
@@ -41,13 +70,13 @@ git clone https://github.com/turtlebot/turtlebot_apps.git #turtlebot_actions nee
 git clone https://github.com/turtlebot/turtlebot_msgs.git
 git clone https://github.com/turtlebot/turtlebot_interactions.git
 
-#Kobuki for Melodic
-git clone --single-branch --branch melodic https://github.com/yujinrobot/kobuki.git
+#Kobuki for ${DISTRO}
+git clone --single-branch --branch ${DISTRO} https://github.com/yujinrobot/kobuki.git
 
 # Build
 catkin build --start-with cv_bridge
 
 
 # I have puck
-# sudo apt install ros-melodic-velodyne -y
+# sudo apt install ros-${DISTRO}-velodyne -y
 
